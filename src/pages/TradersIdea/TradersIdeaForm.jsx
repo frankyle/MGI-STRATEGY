@@ -95,12 +95,14 @@ function TradersIdeaForm({ initialData, onSubmit, onClose }) {
 
   // --- ImageInput Component with Professional Design ---
   const ImageInput = ({ label, name }) => (
-    <div className="flex flex-col items-center gap-2 group p-2 rounded-lg transition-all duration-200 hover:bg-blue-50/50">
+    // Adjusted padding for better mobile fit
+    <div className="flex flex-col items-center gap-2 group p-1 sm:p-2 rounded-lg transition-all duration-200 hover:bg-blue-50/50">
       <p className="text-sm font-semibold text-gray-700 text-center leading-tight">
         {label}
       </p>
 
-      <div className="w-full max-w-[120px] h-[120px] border-2 border-dashed border-gray-300 rounded-xl overflow-hidden flex items-center justify-center bg-white relative shadow-inner transition-all group-hover:border-blue-500">
+      {/* Reduced size for better mobile fit */}
+      <div className="w-full max-w-[100px] h-[100px] sm:max-w-[120px] sm:h-[120px] border-2 border-dashed border-gray-300 rounded-xl overflow-hidden flex items-center justify-center bg-white relative shadow-inner transition-all group-hover:border-blue-500">
         {previews[name] ? (
           <>
             <img 
@@ -120,7 +122,7 @@ function TradersIdeaForm({ initialData, onSubmit, onClose }) {
           </>
         ) : (
           <div className="flex flex-col items-center text-center text-gray-400 p-2">
-            <Upload size={24} className="mb-1 text-blue-400 group-hover:text-blue-600 transition-colors" />
+            <Upload size={20} className="mb-1 text-blue-400 group-hover:text-blue-600 transition-colors" />
             <span className="text-xs font-medium">Upload Chart</span>
           </div>
         )}
@@ -143,16 +145,18 @@ function TradersIdeaForm({ initialData, onSubmit, onClose }) {
 
 
   return (
-    <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl shadow-2xl w-full max-w-6xl mx-auto space-y-8 border border-gray-100">
+    // Main container now has minimal internal styling, relying on the Modal for context
+    <div className="w-full max-w-full mx-auto space-y-6 sm:space-y-8"> 
       
       {/* Header */}
-      <h2 className="text-3xl font-extrabold text-gray-900 text-center pb-4 border-b-4 border-blue-600/10">
-        <BarChart2 className="inline-block mr-3 text-blue-600" size={28} />
+      <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 text-center pb-4 border-b-4 border-blue-600/10">
+        <BarChart2 className="inline-block mr-2 sm:mr-3 text-blue-600" size={24} />
         {initialData ? "Edit Weekly Trading Idea" : "New Weekly Trading Idea"}
       </h2>
 
       {/* Primary Inputs */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      {/* Uses smaller gap on mobile */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"> 
         
         {/* Date Input */}
         <div className="relative">
@@ -202,10 +206,12 @@ function TradersIdeaForm({ initialData, onSubmit, onClose }) {
       </div>
 
       {/* Chart Image Inputs: Weekly Grid */}
-      <div className="space-y-6">
-        <p className="text-xl font-bold text-gray-800 border-t pt-6">📅 Daily Chart Analysis</p>
-        {/* Responsive Grid: 2 columns on small screens, 3 on tablets, 7 on desktop */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-4 justify-center">
+      <div className="space-y-4 pt-4">
+        <p className="text-lg font-bold text-gray-800 border-t pt-4">📅 Daily Chart Analysis</p>
+        
+        {/* REVISED GRID: 2 cols on smallest mobile, 3 on small, 4 on medium, 7 on large desktop */}
+        {/* Note: If you don't have 'xs:grid-cols-3' in your Tailwind config, change 'xs:' to 'sm:' */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 justify-center">
           {DAY_FIELDS.map(({ key, label }) => ( 
             <ImageInput 
               key={key} 
