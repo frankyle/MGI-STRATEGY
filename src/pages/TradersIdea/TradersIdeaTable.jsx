@@ -1,28 +1,72 @@
 // TradersIdeaTable.jsx
-import React, { useState } from "react";
-import { Pencil, Trash2, Calendar, TrendingUp, TrendingDown } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import {
+  Pencil,
+  Trash2,
+  Calendar,
+  TrendingUp,
+  TrendingDown,
+} from "lucide-react";
 import ImageGalleryModal from "./ImageGalleryModal";
-import ImagePreviewOnHover from "./ImagePreviewOnHover"; // Import the new hover component
+import ImagePreviewOnHover from "./ImagePreviewOnHover";
 
 function TradersIdeaTable({ ideas = [], onEdit, onDelete }) {
-  // New state for image gallery modal
+  /* =======================
+     IMAGE GALLERY STATE
+  ======================== */
   const [galleryState, setGalleryState] = useState({
     isOpen: false,
     images: [],
     initialIndex: 0,
   });
 
-  // --- 1. UPDATED: Compact Date Format ---
+  /* =======================
+     PAIR SORT STATE
+  ======================== */
+  const [pairSort, setPairSort] = useState("none"); 
+  // none | asc | desc
+
+  const togglePairSort = () => {
+    setPairSort((prev) =>
+      prev === "none" ? "asc" : prev === "asc" ? "desc" : "none"
+    );
+  };
+
+  /* =======================
+     SORTED IDEAS
+  ======================== */
+  const sortedIdeas = useMemo(() => {
+    if (pairSort === "none") return ideas;
+
+    return [...ideas].sort((a, b) => {
+      const pairA = (a.pair || "").toUpperCase();
+      const pairB = (b.pair || "").toUpperCase();
+
+      if (pairSort === "asc") return pairA.localeCompare(pairB);
+      if (pairSort === "desc") return pairB.localeCompare(pairA);
+      return 0;
+    });
+  }, [ideas, pairSort]);
+
+  /* =======================
+     HELPERS
+  ======================== */
   const formatDate = (dateString) => {
     if (!dateString) return "-";
-    const date = new Date(dateString);
-    // Use MM/DD/YY for a single-line date
-    return date.toLocaleDateString("en-US", { day: "2-digit", month: "2-digit", year: "2-digit" });
+    return new Date(dateString).toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    });
   };
 
   const getSignalIcon = (signal) => {
     if (!signal) return null;
-    return signal.toLowerCase() === "buy" ? <TrendingUp className="w-5 h-5 text-green-600" /> : <TrendingDown className="w-5 h-5 text-red-600" />;
+    return signal.toLowerCase() === "buy" ? (
+      <TrendingUp className="w-5 h-5 text-green-600" />
+    ) : (
+      <TrendingDown className="w-5 h-5 text-red-600" />
+    );
   };
 
   const weekly = [
@@ -38,12 +82,14 @@ function TradersIdeaTable({ ideas = [], onEdit, onDelete }) {
   const handleImageClick = (item, clickedKey) => {
     const imagesList = weekly
       .map(({ key, day }) => ({
-        day: day,
+        day,
         url: item[key],
       }))
-      .filter((img) => img.url); // Filter to include only days with images
+      .filter((img) => img.url);
 
-    const initialIndex = imagesList.findIndex(img => img.url === item[clickedKey]);
+    const initialIndex = imagesList.findIndex(
+      (img) => img.url === item[clickedKey]
+    );
 
     setGalleryState({
       isOpen: true,
@@ -52,61 +98,102 @@ function TradersIdeaTable({ ideas = [], onEdit, onDelete }) {
     });
   };
 
-  const renderImageCell = (src, alt, dayKey, item) => {
-    if (!src) return <span className="text-gray-400 text-xl">–</span>;
-    
-    // Use the new ImagePreviewOnHover component
-    return (
-        <ImagePreviewOnHover
-            src={src}
-            alt={alt}
-            onImageClick={() => handleImageClick(item, dayKey)}
-        />
-    );
-  };
-  
   const closeModal = () => {
     setGalleryState({ isOpen: false, images: [], initialIndex: 0 });
   };
 
+  const renderImageCell = (src, alt, dayKey, item) => {
+    if (!src) return <span className="text-gray-400 text-xl">–</span>;
 
+    return (
+      <ImagePreviewOnHover
+        src={src}
+        alt={alt}
+        onImageClick={() => handleImageClick(item, dayKey)}
+      />
+    );
+  };
+
+  /* =======================
+     RENDER
+  ======================== */
   return (
     <div className="w-full">
-      {/* Desktop Table View */}
+      {/* ================= DESKTOP TABLE ================= */}
       <div className="hidden md:block overflow-x-auto rounded-2xl shadow-lg border border-gray-100">
         <table className="min-w-full bg-white">
           <thead>
-            {/* --- 3. UPDATED: Professional Header Style --- */}
-            <tr className="bg-gray-100 text-gray-700 border-b border-gray-200">
-              <th className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider w-[100px]">Date</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Pair</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-[100px]">Signal</th>
+            <tr className="bg-gray-100 text-gray-700 border-b">
+              <th className="px-3 py-3 text-left text-xs font-semibold uppercase w-[100px]">
+                Date
+              </th>
+
+              {/* ✅ SORTABLE PAIR HEADER */}
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase">
+                <button
+                  onClick={togglePairSort}
+                  className="flex items-center gap-1 hover:text-indigo-600 transition"
+                >
+                  Pair
+                  <span className="text-xs">
+                    {pairSort === "asc" && "▲"}
+                    {pairSort === "desc" && "▼"}
+                    {pairSort === "none" && "⇅"}
+                  </span>
+                </button>
+              </th>
+
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase w-[100px]">
+                Signal
+              </th>
+
               {weekly.map(({ key, day }) => (
-                <th key={key} className="px-1 py-3 text-center text-xs font-semibold uppercase tracking-wider">{day.slice(0,3).toUpperCase()}</th>
+                <th
+                  key={key}
+                  className="px-1 py-3 text-center text-xs font-semibold uppercase"
+                >
+                  {day.slice(0, 3)}
+                </th>
               ))}
-              <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider w-[80px]">Actions</th> {/* Reduced width */}
+
+              <th className="px-4 py-3 text-center text-xs font-semibold uppercase w-[80px]">
+                Actions
+              </th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-200">
-            {ideas.length === 0 ? (
+          <tbody className="divide-y">
+            {sortedIdeas.length === 0 ? (
               <tr>
-                <td colSpan={10} className="text-center py-12 text-gray-500 italic">No trader ideas yet. Start adding your ideas!</td>
+                <td
+                  colSpan={10}
+                  className="text-center py-12 text-gray-500 italic"
+                >
+                  No trader ideas yet.
+                </td>
               </tr>
             ) : (
-              ideas.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50 transition-all duration-200">
-                  <td className="px-3 py-3 text-gray-700 text-sm whitespace-nowrap">
+              sortedIdeas.map((item) => (
+                <tr key={item.id} className="hover:bg-gray-50 transition">
+                  <td className="px-3 py-3 text-sm">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4 text-gray-400" />
-                      {formatDate(item.date)} {/* UPDATED: Compact format */}
+                      {formatDate(item.date)}
                     </div>
                   </td>
 
-                  <td className="px-4 py-3 font-medium text-gray-900 text-sm">{item.pair}</td>
+                  <td className="px-4 py-3 font-medium text-sm">
+                    {item.pair}
+                  </td>
 
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold whitespace-nowrap ${(item.signal || "").toLowerCase() === "buy" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold ${
+                        item.signal?.toLowerCase() === "buy"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
                       {getSignalIcon(item.signal)}
                       {item.signal?.toUpperCase()}
                     </span>
@@ -118,21 +205,17 @@ function TradersIdeaTable({ ideas = [], onEdit, onDelete }) {
                     </td>
                   ))}
 
-                  {/* --- 2. UPDATED: Icon-Only Action Buttons --- */}
                   <td className="px-4 py-3 text-center">
                     <div className="flex justify-center gap-1">
-                      <button 
-                        onClick={() => onEdit(item)} 
-                        className="p-2 text-amber-600 hover:bg-amber-100 rounded-full transition"
-                        title="Edit Idea"
+                      <button
+                        onClick={() => onEdit(item)}
+                        className="p-2 text-amber-600 hover:bg-amber-100 rounded-full"
                       >
                         <Pencil size={18} />
                       </button>
-
-                      <button 
-                        onClick={() => onDelete(item)} 
-                        className="p-2 text-red-600 hover:bg-red-100 rounded-full transition"
-                        title="Delete Idea"
+                      <button
+                        onClick={() => onDelete(item)}
+                        className="p-2 text-red-600 hover:bg-red-100 rounded-full"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -145,70 +228,7 @@ function TradersIdeaTable({ ideas = [], onEdit, onDelete }) {
         </table>
       </div>
 
-      {/* Mobile Card View (Updated for style consistency) */}
-      <div className="block md:hidden space-y-4">
-        {ideas.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-2xl text-gray-500 italic">No trader ideas yet. Start adding your ideas!</div>
-        ) : (
-          ideas.map((item) => (
-            <div key={item.id} className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 hover:shadow-xl transition-shadow">
-              <div className="flex justify-between items-start mb-3 border-b pb-3">
-                <div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-1 font-medium">
-                    <Calendar className="w-4 h-4 text-indigo-500" />
-                    {formatDate(item.date)}
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900">{item.pair}</h3>
-                </div>
-
-                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${(item.signal || "").toLowerCase() === "buy" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                  {getSignalIcon(item.signal)}
-                  {item.signal?.toUpperCase()}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-4 sm:grid-cols-7 gap-3 my-4">
-                {weekly.map(({ key, day }) => (
-                  <div key={key} className="text-center">
-                    <p className="text-xs text-gray-500 font-medium mb-1">{day.slice(0, 3)}</p>
-                    {item[key] ? (
-                        <ImagePreviewOnHover
-                            src={item[key]}
-                            alt={day}
-                            onImageClick={() => handleImageClick(item, key)}
-                        />
-                    ) : (
-                      <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg h-16 w-16 mx-auto flex items-center justify-center">
-                        <span className="text-gray-400 text-xl">–</span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* UPDATED: Icon-only buttons for mobile actions too */}
-              <div className="flex justify-end gap-2 mt-3 pt-3 border-t">
-                <button 
-                    onClick={() => onEdit(item)} 
-                    className="p-3 text-amber-600 hover:bg-amber-100 rounded-xl transition shadow"
-                    title="Edit Idea"
-                >
-                  <Pencil size={20} />
-                </button>
-                <button 
-                    onClick={() => onDelete(item)} 
-                    className="p-3 text-red-600 hover:bg-red-100 rounded-xl transition shadow"
-                    title="Delete Idea"
-                >
-                  <Trash2 size={20} />
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-      
-      {/* Image Gallery Modal Render */}
+      {/* ================= IMAGE GALLERY ================= */}
       {galleryState.isOpen && (
         <ImageGalleryModal
           images={galleryState.images}
