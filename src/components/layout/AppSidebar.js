@@ -9,6 +9,7 @@ const menuItems = [
   { title: "MGI Strategy", url: "/mgi", icon: ShoppingCart },
   { title: "Personal Account", url: "/personal", icon: DollarSign },
   { title: "Funded Account", url: "/funded", icon: Package },
+  // { title: "Blog", url: "/mgitradeblog", icon: Package },
 ];
 
 export function AppSidebar({ mobileOpen, setMobileOpen }) {
