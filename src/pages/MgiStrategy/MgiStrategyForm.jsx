@@ -2,47 +2,47 @@
 import React, { useState, useEffect } from "react";
 import { Upload, X, Calendar, DollarSign, BarChart3 } from 'lucide-react'; 
 
-// --- CHART FIELDS (Kept Unchanged as Requested) ---
+// --- CHART FIELDS (Updated with Day Labels Only) ---
 const CHART_FIELDS = [
   { 
     key: "daily_chart",
-    label: "(1) Daily Chart - Daily Candle Price Action", 
+    label: "Monday", 
     tooltip: "Daily narrative context using macro ICT model", 
     description: "Higher timeframe narrative" 
   },
   { 
     key: "two_hr_chart",
-    label: "(2) Trading Setup (2H Chart - DHDL Movement + ICT Killzone)", 
+    label: "Tuesday", 
     tooltip: "Show Higher Timeframe Bias • DHDL Structure • ICT Kill Zone", 
     description: "2H Bias + DHDL movement + Kill Zone" 
   },
   { 
     key: "one_hr_chart",
-    label: "(3) MGI Strategy (1H Chart - Unbroken NYC Levels + ICT Concept)", 
+    label: "Wednesday", 
     tooltip: "NY Session expectation based on unbroken liquidity levels & ICT Kill Zone", 
     description: "NY Session directional thesis" 
   },
   { 
     key: "fifteen_min_chart",
-    label: "(4) Entry Execution (15m Chart Entry - ICT concept + ICT killzone)", 
+    label: "Thursday", 
     tooltip: "Liquidity Grab → Displacement → Entry inside Kill Zone using FVG/OB", 
     description: "15m entry using FVG, OB or BB"
   },
   { 
     key: "mt5_chart",
-    label: "(5) MT5 Chart of Daily", // Adjusted label for better clarity
+    label: "Friday", 
     tooltip: "MT5 chart of Daily", 
-    description: "MT5 Daily Chart" // Adjusted description
+    description: "MT5 Daily Chart" 
   },
   { 
     key: "profit_chart",
-    label: "(6) Profit Result (1H Chart - DHDL Movement + ICT Killzone)", 
+    label: "Saturday", 
     tooltip: "Show how price reached target objective using DHDL draw & Kill Zone timing", 
     description: "1H draw objective achieved" 
   },
   { 
     key: "pnl_chart",
-    label: "(7) PnL Chart (Profit/Loss Screenshot)", 
+    label: "Sunday", 
     tooltip: "Final Profit & Loss statement screenshot", 
     description: "FINAL PnL CHART FIELD" 
   }, 
