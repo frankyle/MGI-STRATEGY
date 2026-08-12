@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, DollarSign, ShoppingCart, Package, X, Beaker, LogOut, LineChart } from "lucide-react";
+import { LayoutDashboard, DollarSign, ShoppingCart, Package, X, Beaker, LogOut, LineChart, Target } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 
@@ -8,6 +8,7 @@ const menuItems = [
   { title: "Traders Ideas", url: "/tradersidea", icon: Beaker },
   { title: "MGI Strategy", url: "/mgi", icon: ShoppingCart },
   { title: "Strategy Tracker", url: "/strategy-tracker", icon: LineChart },
+  { title: "Setup Match Grader", url: "/setup-match-grader", icon: Target },
   { title: "Personal Account", url: "/personal", icon: DollarSign },
   { title: "Funded Account", url: "/funded", icon: Package },
   // { title: "Blog", url: "/mgitradeblog", icon: Package },
