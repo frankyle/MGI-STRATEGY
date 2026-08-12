@@ -17,6 +17,7 @@ import MgiStrategy from "./pages/MgiStrategy/MgiStrategy";
 
 import MgiTradeBlog from "./pages/MgiStrategy/MgiTradeBlog";
 import StrategyTracker from "./pages/StrategyTracker/StrategyTracker";
+import SetupMatchGrader from "./pages/SetupMatchGrader/SetupMatchGrader";
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -61,6 +62,7 @@ function App() {
           <Route path="mgi" element={<MgiStrategy />} />
           <Route path="mgitradeblog" element={<MgiTradeBlog />} />
           <Route path="strategy-tracker" element={<StrategyTracker />} />
+          <Route path="setup-match-grader" element={<SetupMatchGrader />} />
 
         </Route>
 
