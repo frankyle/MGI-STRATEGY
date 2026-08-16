@@ -6,13 +6,13 @@ import ImagePreviewOnHover from "./ImagePreviewOnHover";
 
 // --- UPDATED: CHART_FIELDS DEFINITION ---
 const CHART_FIELDS = [
-  { key: "daily_chart", label: "Daily" },
-  { key: "two_hr_chart", label: "2hr Chart" },
-  { key: "one_hr_chart", label: "1hr Chart" },
-  { key: "fifteen_min_chart", label: "15min Chart" },
-  { key: "mt5_chart", label: "MT5 Chart" },
-  { key: "profit_chart", label: "Profit Chart" },
-  { key: "pnl_chart", label: "PnL Chart" }, 
+  { key: "daily_chart", label: "Monday" },
+  { key: "two_hr_chart", label: "Tuesday" },
+  { key: "one_hr_chart", label: "Wednesday" },
+  { key: "fifteen_min_chart", label: "Thursday" },
+  { key: "mt5_chart", label: "Friday" },
+  { key: "profit_chart", label: "Saturday" },
+  { key: "pnl_chart", label: "Sunday" }, 
 ];
 // ------------------------------------------
 
@@ -84,10 +84,9 @@ function MgiStrategyTable({ ideas = [], onEdit, onDelete }) {
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Pair</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-[100px] whitespace-nowrap">Signal</th>
               {CHART_FIELDS.map(({ key, label }) => (
-                // Display the label, shortening it if necessary for column width
+                // Display the day label directly
                 <th key={key} className="px-1 py-3 text-center text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap">
-                    {/* Shortening labels for compact column display */}
-                    {label.replace(' Chart', '').replace('15min', '15m').replace('2hr', '2H').replace('1hr', '1H').replace('Profit', 'PFIT')}
+                    {label}
                 </th>
               ))}
               <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider w-[80px] whitespace-nowrap">Actions</th>
